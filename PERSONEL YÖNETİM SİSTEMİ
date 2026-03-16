@@ -1,1 +1,724 @@
+<!doctype html>
+<html lang="tr" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Personel Yönetim Sistemi</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="/_sdk/data_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+    body {
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+    
+    :root {
+      --bg-color: #0f172a;
+      --surface-color: #1e293b;
+      --text-color: #f1f5f9;
+      --primary-color: #8b5cf6;
+      --accent-color: #06b6d4;
+    }
+    
+    .app-wrapper {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+    }
+    
+    .glass-card {
+      background: rgba(30, 41, 59, 0.7);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(139, 92, 246, 0.2);
+    }
+    
+    .input-field {
+      background: rgba(15, 23, 42, 0.5);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+      color: #f1f5f9;
+      transition: all 0.3s ease;
+    }
+    
+    .input-field:focus {
+      background: rgba(15, 23, 42, 0.7);
+      border-color: #8b5cf6;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+    }
+    
+    .input-field::placeholder {
+      color: #64748b;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+      box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+      transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(139, 92, 246, 0.5);
+    }
+    
+    .btn-secondary {
+      background: rgba(6, 182, 212, 0.2);
+      border: 1px solid #06b6d4;
+      color: #06b6d4;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-secondary:hover {
+      background: rgba(6, 182, 212, 0.3);
+      transform: translateY(-1px);
+    }
+    
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+      padding: 0.375rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    
+    .status-active {
+      background: rgba(34, 197, 94, 0.2);
+      color: #86efac;
+      border: 1px solid rgba(34, 197, 94, 0.4);
+    }
+    
+    .status-inactive {
+      background: rgba(239, 68, 68, 0.2);
+      color: #fca5a5;
+      border: 1px solid rgba(239, 68, 68, 0.4);
+    }
+    
+    .card-hover {
+      transition: all 0.3s ease;
+    }
+    
+    .card-hover:hover {
+      background: rgba(30, 41, 59, 0.9);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
+    
+    .modal-backdrop {
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(8px);
+    }
+    
+    .slide-in {
+      animation: slideIn 0.3s ease-out;
+    }
+    
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .fade-in {
+      animation: fadeIn 0.5s ease-out;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    .loading-spinner {
+      border: 3px solid rgba(139, 92, 246, 0.2);
+      border-top: 3px solid #8b5cf6;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      animation: spin 0.8s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .stat-card {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(124, 58, 237, 0.1) 100%);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+    }
+    
+    select option {
+      background: #1e293b;
+      color: #f1f5f9;
+    }
+    
+    .grid-layout {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 1.5rem;
+    }
+    
+    @media (max-width: 768px) {
+      .grid-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+ </head>
+ <body class="h-full">
+  <div class="app-wrapper h-full overflow-auto">
+   <div class="max-w-7xl mx-auto p-4 md:p-8"><!-- Header -->
+    <header class="mb-8 fade-in">
+     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div>
+       <div class="flex items-center gap-3 mb-2">
+        <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center shadow-lg">
+         <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+         </svg>
+        </div>
+        <div>
+         <h1 id="main-title" class="text-3xl md:text-4xl font-bold text-white">Personel Yönetim Sistemi</h1>
+         <p id="subtitle" class="text-cyan-300 text-sm md:text-base mt-1">Çalışan bilgilerini yönetin</p>
+        </div>
+       </div>
+      </div><button id="add-employee-btn" class="btn-primary px-6 py-3 rounded-xl font-semibold text-white flex items-center justify-center gap-2 whitespace-nowrap">
+       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+       </svg><span id="add-button-text">Yeni Personel</span> </button>
+     </div>
+    </header><!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 fade-in">
+     <div class="stat-card rounded-2xl p-5">
+      <div class="flex items-center justify-between">
+       <div>
+        <p class="text-slate-400 text-sm font-medium">Toplam Personel</p>
+        <p id="total-count" class="text-3xl font-bold text-white mt-2">0</p>
+       </div>
+       <div class="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center">
+        <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+        </svg>
+       </div>
+      </div>
+     </div>
+     <div class="stat-card rounded-2xl p-5">
+      <div class="flex items-center justify-between">
+       <div>
+        <p class="text-slate-400 text-sm font-medium">Aktif Çalışan</p>
+        <p id="active-count" class="text-3xl font-bold text-green-400 mt-2">0</p>
+       </div>
+       <div class="w-12 h-12 rounded-xl bg-green-500/20 flex items-center justify-center">
+        <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+       </div>
+      </div>
+     </div>
+     <div class="stat-card rounded-2xl p-5">
+      <div class="flex items-center justify-between">
+       <div>
+        <p class="text-slate-400 text-sm font-medium">Departman</p>
+        <p id="department-count" class="text-3xl font-bold text-cyan-400 mt-2">0</p>
+       </div>
+       <div class="w-12 h-12 rounded-xl bg-cyan-500/20 flex items-center justify-center">
+        <svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+        </svg>
+       </div>
+      </div>
+     </div>
+     <div class="stat-card rounded-2xl p-5">
+      <div class="flex items-center justify-between">
+       <div>
+        <p class="text-slate-400 text-sm font-medium">Bu Ay</p>
+        <p id="month-count" class="text-3xl font-bold text-amber-400 mt-2">0</p>
+       </div>
+       <div class="w-12 h-12 rounded-xl bg-amber-500/20 flex items-center justify-center">
+        <svg class="w-6 h-6 text-amber-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+       </div>
+      </div>
+     </div>
+    </div><!-- Search and Filter -->
+    <div class="glass-card rounded-2xl p-5 mb-6 fade-in">
+     <div class="flex flex-col md:flex-row gap-4">
+      <div class="flex-1 relative">
+       <svg class="w-5 h-5 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+       </svg><input type="text" id="search-input" placeholder="İsim, e-posta, pozisyon ara..." class="input-field w-full pl-12 pr-4 py-3 rounded-xl">
+      </div><select id="department-filter" class="input-field px-4 py-3 rounded-xl"> <option value="">Tüm Departmanlar</option> <option value="Yazılım">Bilgi işlem</option> <option value="Pazarlama">Pazarlama</option> <option value="İnsan Kaynakları">İnsan Kaynakları</option> <option value="Finans">Finans</option> <option value="Satış">Satış</option> <option value="Müşteri Hizmetleri">Müşteri Hizmetleri</option> <option value="Ar-Ge">Ar-Ge</option> <option value="Operasyon">Operasyon</option> <option value="Yönetim">Yönetim</option> </select> <select id="status-filter" class="input-field px-4 py-3 rounded-xl"> <option value="">Tüm Durumlar</option> <option value="Aktif">Aktif</option> <option value="Pasif">Pasif</option> </select>
+     </div>
+    </div><!-- Employee Cards Grid -->
+    <div id="empty-state" class="glass-card rounded-2xl p-12 text-center">
+     <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-purple-500/10 mb-4">
+      <svg class="w-10 h-10 text-purple-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+      </svg>
+     </div>
+     <h3 class="text-xl font-semibold text-white mb-2">Henüz personel kaydı yok</h3>
+     <p class="text-slate-400 mb-6">Yeni personel eklemek için yukarıdaki butona tıklayın</p>
+    </div>
+    <div id="employee-grid" class="grid-layout hidden"></div><!-- Limit Warning -->
+    <div id="limit-warning" class="glass-card rounded-2xl p-4 mt-6 hidden border-amber-500/50">
+     <div class="flex items-center gap-3 text-amber-300">
+      <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+      </svg>
+      <p class="font-medium">Maksimum 999 personel kaydı sınırına ulaşıldı. Yeni kayıt için mevcut kayıtları silin.</p>
+     </div>
+    </div>
+   </div>
+  </div><!-- Modal for Add/Edit -->
+  <div id="modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+   <div class="modal-backdrop absolute inset-0" id="modal-backdrop"></div>
+   <div class="glass-card rounded-3xl p-8 max-w-2xl w-full relative z-10 slide-in max-h-[90vh] overflow-y-auto">
+    <div class="flex items-center justify-between mb-6">
+     <h2 id="modal-title" class="text-2xl font-bold text-white">Yeni Personel Ekle</h2><button id="close-modal" class="text-slate-400 hover:text-white transition-colors">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg></button>
+    </div>
+    <form id="employee-form" class="space-y-5">
+     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <div><label for="first_name" class="block text-sm font-medium text-slate-300 mb-2">Ad *</label> <input type="text" id="first_name" name="first_name" required class="input-field w-full px-4 py-3 rounded-xl" placeholder="name">
+      </div>
+      <div><label for="last_name" class="block text-sm font-medium text-slate-300 mb-2">Soyad *</label> <input type="text" id="last_name" name="last_name" required class="input-field w-full px-4 py-3 rounded-xl" placeholder="surname">
+      </div>
+     </div>
+     <div><label for="email" class="block text-sm font-medium text-slate-300 mb-2">E-posta *</label> <input type="email" id="email" name="email" required class="input-field w-full px-4 py-3 rounded-xl" placeholder="ornek@sirket.com">
+     </div>
+     <div><label for="phone" class="block text-sm font-medium text-slate-300 mb-2">Telefon</label> <input type="tel" id="phone" name="phone" class="input-field w-full px-4 py-3 rounded-xl" placeholder="number">
+     </div>
+     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <div><label for="department" class="block text-sm font-medium text-slate-300 mb-2">Departman *</label> <select id="department" name="department" required class="input-field w-full px-4 py-3 rounded-xl"> <option value="">Seçiniz</option> <option value="Yazılım">Bilgi işlem</option> <option value="Pazarlama">Pazarlama</option> <option value="İnsan Kaynakları">İnsan Kaynakları</option> <option value="Finans">Finans</option> <option value="Satış">Satış</option> <option value="Müşteri Hizmetleri">Müşteri Hizmetleri</option> <option value="Ar-Ge">Ar-Ge</option> <option value="Operasyon">Operasyon</option> <option value="Yönetim">Yönetim</option> </select>
+      </div>
+      <div><label for="status" class="block text-sm font-medium text-slate-300 mb-2">Durum *</label> <select id="status" name="status" required class="input-field w-full px-4 py-3 rounded-xl"> <option value="Aktif">Aktif</option> <option value="Pasif">Pasif</option> </select>
+      </div>
+     </div>
+     <div><label for="position" class="block text-sm font-medium text-slate-300 mb-2">Pozisyon *</label> <input type="text" id="position" name="position" required class="input-field w-full px-4 py-3 rounded-xl" placeholder="Kıdemli bilgi işlem Geliştirici">
+     </div>
+     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <div><label for="start_date" class="block text-sm font-medium text-slate-300 mb-2">İşe Başlama *</label> <input type="date" id="start_date" name="start_date" required class="input-field w-full px-4 py-3 rounded-xl">
+      </div>
+      <div><label for="salary" class="block text-sm font-medium text-slate-300 mb-2">Maaş (₺)</label> <input type="text" id="salary" name="salary" class="input-field w-full px-4 py-3 rounded-xl" placeholder="wage">
+      </div>
+     </div>
+     <div class="flex gap-3 pt-4"><button type="submit" id="save-btn" class="btn-primary flex-1 py-3 rounded-xl font-semibold text-white flex items-center justify-center gap-2"> <span id="save-button-text">Kaydet</span> </button> <button type="button" id="cancel-btn" class="btn-secondary px-6 py-3 rounded-xl font-semibold"> İptal </button>
+     </div>
+    </form>
+    <div id="form-message" class="mt-4 hidden"></div>
+   </div>
+  </div><!-- Delete Confirmation Modal -->
+  <div id="delete-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+   <div class="modal-backdrop absolute inset-0" id="delete-backdrop"></div>
+   <div class="glass-card rounded-2xl p-8 max-w-md w-full relative z-10 slide-in">
+    <div class="text-center">
+     <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-500/20 mb-4">
+      <svg class="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+      </svg>
+     </div>
+     <h3 class="text-xl font-bold text-white mb-2">Personeli Sil</h3>
+     <p class="text-slate-400 mb-6">Bu personel kaydını silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.</p>
+     <div class="flex gap-3"><button id="confirm-delete-btn" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold py-3 rounded-xl transition-all"> Evet, Sil </button> <button id="cancel-delete-btn" class="flex-1 btn-secondary py-3 rounded-xl font-semibold"> İptal </button>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+    const defaultConfig = {
+      main_title: 'Personel Yönetim Sistemi',
+      subtitle: 'Çalışan bilgilerini yönetin',
+      add_button_text: 'Yeni Personel',
+      save_button_text: 'Kaydet',
+      background_color: '#0f172a',
+      card_color: '#1e293b',
+      text_color: '#f1f5f9',
+      primary_color: '#8b5cf6',
+      accent_color: '#06b6d4'
+    };
 
+    let employees = [];
+    let currentEmployeeId = null;
+    let deleteEmployeeId = null;
+    let isLoading = false;
+
+    const dataHandler = {
+      onDataChanged(data) {
+        employees = data;
+        renderEmployeeGrid();
+        updateStats();
+        updateLimitWarning();
+      }
+    };
+
+    async function initApp() {
+      if (window.elementSdk) {
+        window.elementSdk.init({
+          defaultConfig,
+          onConfigChange: async (config) => {
+            document.getElementById('main-title').textContent = config.main_title || defaultConfig.main_title;
+            document.getElementById('subtitle').textContent = config.subtitle || defaultConfig.subtitle;
+            document.getElementById('add-button-text').textContent = config.add_button_text || defaultConfig.add_button_text;
+            document.getElementById('save-button-text').textContent = config.save_button_text || defaultConfig.save_button_text;
+          },
+          mapToCapabilities: (config) => ({
+            recolorables: [
+              {
+                get: () => config.background_color || defaultConfig.background_color,
+                set: (value) => window.elementSdk.setConfig({ background_color: value })
+              },
+              {
+                get: () => config.card_color || defaultConfig.card_color,
+                set: (value) => window.elementSdk.setConfig({ card_color: value })
+              },
+              {
+                get: () => config.text_color || defaultConfig.text_color,
+                set: (value) => window.elementSdk.setConfig({ text_color: value })
+              },
+              {
+                get: () => config.primary_color || defaultConfig.primary_color,
+                set: (value) => window.elementSdk.setConfig({ primary_color: value })
+              },
+              {
+                get: () => config.accent_color || defaultConfig.accent_color,
+                set: (value) => window.elementSdk.setConfig({ accent_color: value })
+              }
+            ],
+            borderables: [],
+            fontEditable: undefined,
+            fontSizeable: undefined
+          }),
+          mapToEditPanelValues: (config) => new Map([
+            ['main_title', config.main_title || defaultConfig.main_title],
+            ['subtitle', config.subtitle || defaultConfig.subtitle],
+            ['add_button_text', config.add_button_text || defaultConfig.add_button_text],
+            ['save_button_text', config.save_button_text || defaultConfig.save_button_text]
+          ])
+        });
+      }
+
+      if (window.dataSdk) {
+        const result = await window.dataSdk.init(dataHandler);
+        if (!result.isOk) {
+          showFormMessage('Veri bağlantısı kurulamadı.', 'error');
+        }
+      }
+
+      setupEventListeners();
+    }
+
+    function setupEventListeners() {
+      document.getElementById('add-employee-btn').addEventListener('click', () => openModal());
+      document.getElementById('close-modal').addEventListener('click', closeModal);
+      document.getElementById('modal-backdrop').addEventListener('click', closeModal);
+      document.getElementById('cancel-btn').addEventListener('click', closeModal);
+      document.getElementById('employee-form').addEventListener('submit', handleFormSubmit);
+      document.getElementById('search-input').addEventListener('input', renderEmployeeGrid);
+      document.getElementById('department-filter').addEventListener('change', renderEmployeeGrid);
+      document.getElementById('status-filter').addEventListener('change', renderEmployeeGrid);
+      document.getElementById('cancel-delete-btn').addEventListener('click', closeDeleteModal);
+      document.getElementById('delete-backdrop').addEventListener('click', closeDeleteModal);
+      document.getElementById('confirm-delete-btn').addEventListener('click', confirmDelete);
+    }
+
+    function openModal(employee = null) {
+      currentEmployeeId = employee ? employee.__backendId : null;
+      const modal = document.getElementById('modal');
+      const title = document.getElementById('modal-title');
+      const form = document.getElementById('employee-form');
+
+      if (employee) {
+        title.textContent = 'Personel Düzenle';
+        document.getElementById('first_name').value = employee.first_name;
+        document.getElementById('last_name').value = employee.last_name;
+        document.getElementById('email').value = employee.email;
+        document.getElementById('phone').value = employee.phone || '';
+        document.getElementById('department').value = employee.department;
+        document.getElementById('status').value = employee.status;
+        document.getElementById('position').value = employee.position;
+        document.getElementById('start_date').value = employee.start_date;
+        document.getElementById('salary').value = employee.salary || '';
+      } else {
+        title.textContent = 'Yeni Personel Ekle';
+        form.reset();
+        document.getElementById('status').value = 'Aktif';
+      }
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeModal() {
+      document.getElementById('modal').classList.add('hidden');
+      document.getElementById('employee-form').reset();
+      document.getElementById('form-message').classList.add('hidden');
+      currentEmployeeId = null;
+    }
+
+    async function handleFormSubmit(e) {
+      e.preventDefault();
+
+      if (!currentEmployeeId && employees.length >= 999) {
+        showFormMessage('Maksimum kayıt sınırına ulaşıldı.', 'error');
+        return;
+      }
+
+      if (!window.dataSdk) {
+        showFormMessage('Veri bağlantısı yok.', 'error');
+        return;
+      }
+
+      const formData = new FormData(e.target);
+      const employeeData = {
+        id: currentEmployeeId || Date.now().toString(),
+        first_name: formData.get('first_name'),
+        last_name: formData.get('last_name'),
+        email: formData.get('email'),
+        phone: formData.get('phone') || '',
+        department: formData.get('department'),
+        status: formData.get('status'),
+        position: formData.get('position'),
+        start_date: formData.get('start_date'),
+        salary: formData.get('salary') || '',
+        created_at: currentEmployeeId ? employees.find(e => e.__backendId === currentEmployeeId).created_at : new Date().toISOString()
+      };
+
+      setFormLoading(true);
+
+      let result;
+      if (currentEmployeeId) {
+        const existing = employees.find(e => e.__backendId === currentEmployeeId);
+        result = await window.dataSdk.update({ ...employeeData, __backendId: existing.__backendId });
+      } else {
+        result = await window.dataSdk.create(employeeData);
+      }
+
+      setFormLoading(false);
+
+      if (result.isOk) {
+        showFormMessage(currentEmployeeId ? 'Personel güncellendi!' : 'Personel eklendi!', 'success');
+        setTimeout(closeModal, 1500);
+      } else {
+        showFormMessage('İşlem başarısız oldu.', 'error');
+      }
+    }
+
+    function openDeleteModal(id) {
+      deleteEmployeeId = id;
+      document.getElementById('delete-modal').classList.remove('hidden');
+    }
+
+    function closeDeleteModal() {
+      document.getElementById('delete-modal').classList.add('hidden');
+      deleteEmployeeId = null;
+    }
+
+    async function confirmDelete() {
+      if (!deleteEmployeeId || !window.dataSdk) return;
+
+      const emp = employees.find(e => e.__backendId === deleteEmployeeId);
+      if (!emp) return;
+
+      const result = await window.dataSdk.delete(emp);
+
+      if (result.isOk) {
+        closeDeleteModal();
+      } else {
+        showFormMessage('Silme işlemi başarısız oldu.', 'error');
+      }
+    }
+
+    function renderEmployeeGrid() {
+      const searchTerm = document.getElementById('search-input').value.toLowerCase();
+      const deptFilter = document.getElementById('department-filter').value;
+      const statusFilter = document.getElementById('status-filter').value;
+
+      let filtered = employees.filter(emp => {
+        const matchesSearch = emp.first_name.toLowerCase().includes(searchTerm) ||
+          emp.last_name.toLowerCase().includes(searchTerm) ||
+          emp.email.toLowerCase().includes(searchTerm) ||
+          emp.position.toLowerCase().includes(searchTerm);
+        const matchesDept = !deptFilter || emp.department === deptFilter;
+        const matchesStatus = !statusFilter || emp.status === statusFilter;
+        return matchesSearch && matchesDept && matchesStatus;
+      });
+
+      const grid = document.getElementById('employee-grid');
+      const emptyState = document.getElementById('empty-state');
+
+      if (employees.length === 0) {
+        emptyState.classList.remove('hidden');
+        grid.classList.add('hidden');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+      grid.classList.remove('hidden');
+
+      const existingCards = new Map([...grid.querySelectorAll('[data-id]')].map(card => [card.dataset.id, card]));
+
+      filtered.forEach(emp => {
+        const existing = existingCards.get(emp.__backendId);
+        if (existing) {
+          updateCard(existing, emp);
+          existingCards.delete(emp.__backendId);
+        } else {
+          grid.appendChild(createCard(emp));
+        }
+      });
+
+      existingCards.forEach(card => card.remove());
+    }
+
+    function createCard(emp) {
+      const card = document.createElement('div');
+      card.dataset.id = emp.__backendId;
+      card.className = 'glass-card rounded-2xl p-6 card-hover fade-in';
+      updateCard(card, emp);
+      return card;
+    }
+
+    function updateCard(card, emp) {
+      const startDate = emp.start_date ? new Date(emp.start_date).toLocaleDateString('tr-TR') : '-';
+      const statusClass = emp.status === 'Aktif' ? 'status-active' : 'status-inactive';
+      const statusIcon = emp.status === 'Aktif' 
+        ? '<svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><circle cx="10" cy="10" r="10"/></svg>'
+        : '<svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><circle cx="10" cy="10" r="10"/></svg>';
+
+      card.innerHTML = `
+        <div class="flex items-start justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center text-white font-bold text-lg shadow-lg">
+              ${emp.first_name.charAt(0)}${emp.last_name.charAt(0)}
+            </div>
+            <div>
+              <h3 class="text-lg font-semibold text-white">${emp.first_name} ${emp.last_name}</h3>
+              <p class="text-sm text-slate-400">${emp.position}</p>
+            </div>
+          </div>
+          <span class="status-badge ${statusClass}">
+            ${statusIcon}
+            ${emp.status}
+          </span>
+        </div>
+
+        <div class="space-y-3 mb-4">
+          <div class="flex items-center gap-2 text-sm">
+            <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            </svg>
+            <span class="text-slate-300">${emp.email}</span>
+          </div>
+          ${emp.phone ? `
+          <div class="flex items-center gap-2 text-sm">
+            <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+            </svg>
+            <span class="text-slate-300">${emp.phone}</span>
+          </div>
+          ` : ''}
+          <div class="flex items-center gap-2 text-sm">
+            <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+            </svg>
+            <span class="text-slate-300">${emp.department}</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm">
+            <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            <span class="text-slate-300">${startDate}</span>
+          </div>
+          ${emp.salary ? `
+          <div class="flex items-center gap-2 text-sm">
+            <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <span class="text-slate-300">${emp.salary} ₺</span>
+          </div>
+          ` : ''}
+        </div>
+
+        <div class="flex gap-2 pt-4 border-t border-slate-700">
+          <button onclick="editEmployee('${emp.__backendId}')" class="flex-1 btn-secondary py-2 rounded-lg text-sm font-medium flex items-center justify-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+            </svg>
+            Düzenle
+          </button>
+          <button onclick="openDeleteModal('${emp.__backendId}')" class="px-4 py-2 rounded-lg bg-red-500/20 border border-red-500/40 text-red-400 hover:bg-red-500/30 transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+            </svg>
+          </button>
+        </div>
+      `;
+    }
+
+    function editEmployee(id) {
+      const emp = employees.find(e => e.__backendId === id);
+      if (emp) openModal(emp);
+    }
+
+    function updateStats() {
+      document.getElementById('total-count').textContent = employees.length;
+      document.getElementById('active-count').textContent = employees.filter(e => e.status === 'Aktif').length;
+      
+      const uniqueDepts = new Set(employees.map(e => e.department));
+      document.getElementById('department-count').textContent = uniqueDepts.size;
+
+      const thisMonth = new Date().getMonth();
+      const thisYear = new Date().getFullYear();
+      const monthCount = employees.filter(e => {
+        const startDate = new Date(e.start_date);
+        return startDate.getMonth() === thisMonth && startDate.getFullYear() === thisYear;
+      }).length;
+      document.getElementById('month-count').textContent = monthCount;
+    }
+
+    function updateLimitWarning() {
+      const warning = document.getElementById('limit-warning');
+      if (employees.length >= 999) {
+        warning.classList.remove('hidden');
+      } else {
+        warning.classList.add('hidden');
+      }
+    }
+
+    function setFormLoading(loading) {
+      const btn = document.getElementById('save-btn');
+      const btnText = document.getElementById('save-button-text');
+      
+      if (loading) {
+        btn.disabled = true;
+        btn.classList.add('opacity-70');
+        btnText.innerHTML = '<div class="loading-spinner mr-2"></div>Kaydediliyor...';
+      } else {
+        btn.disabled = false;
+        btn.classList.remove('opacity-70');
+        btnText.textContent = window.elementSdk ? window.elementSdk.config.save_button_text || defaultConfig.save_button_text : defaultConfig.save_button_text;
+      }
+    }
+
+    function showFormMessage(text, type) {
+      const message = document.getElementById('form-message');
+      message.className = `mt-4 px-4 py-3 rounded-xl text-sm font-medium ${
+        type === 'success' 
+          ? 'bg-green-500/20 text-green-300 border border-green-500/40' 
+          : 'bg-red-500/20 text-red-300 border border-red-500/40'
+      }`;
+      message.textContent = text;
+      message.classList.remove('hidden');
+
+      if (type === 'success') {
+        setTimeout(() => {
+          message.classList.add('hidden');
+        }, 3000);
+      }
+    }
+
+    window.editEmployee = editEmployee;
+    window.openDeleteModal = openDeleteModal;
+
+    initApp();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9c82f22583cab0d2',t:'MTc3MDEzMjM3OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
