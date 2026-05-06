@@ -1,0 +1,54 @@
+import 'package:flutter/material.dart';
+
+void main() => runApp(MaterialApp(home: Sayfa()));
+
+class Sayfa extends StatefulWidget {
+  @override
+  State<Sayfa> createState() => _SayfaState();
+}
+
+class _SayfaState extends State<Sayfa> {
+  var ad = TextEditingController(),
+      soyad = TextEditingController(),
+      email = TextEditingController(),
+      tc = TextEditingController();
+
+  String dosya = "Yok", sonuc = "";
+
+  @override
+  Widget build(BuildContext c) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Personel Ekle")),
+      body: Container(
+        padding: EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.blue.shade100, Colors.white],
+          ),
+        ),
+        child: Column(
+          children: [
+            TextField(controller: ad, decoration: InputDecoration(labelText: "Ad")),
+            TextField(controller: soyad, decoration: InputDecoration(labelText: "Soyad")),
+            TextField(controller: email, decoration: InputDecoration(labelText: "Email")),
+            TextField(controller: tc, decoration: InputDecoration(labelText: "TC")),
+
+            ElevatedButton(
+              onPressed: () => setState(() => dosya = "cv.pdf"),
+              child: Text("Dosya Ekle"),
+            ),
+
+            ElevatedButton(
+              onPressed: () => setState(() {
+                sonuc = "${ad.text} ${soyad.text}\n${email.text}\n${tc.text}\n$dosya";
+              }),
+              child: Text("Kişi Ekle"),
+            ),
+
+            Text(sonuc),
+          ],
+        ),
+      ),
+    );
+  }
+}
