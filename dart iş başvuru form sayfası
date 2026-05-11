@@ -14,12 +14,14 @@ void main() {
               fit: BoxFit.cover,
             ),
           ),
+
           child: Center(
             child: SingleChildScrollView(
               child: Container(
                 padding: EdgeInsets.all(20),
                 margin: EdgeInsets.all(20),
                 color: Colors.white70,
+
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -54,6 +56,10 @@ void main() {
                         labelText: "Adres",
                       ),
                     ),
+
+                    SizedBox(height: 10),
+
+                    Text("Yüklenen Dosya: cv.pdf"),
 
                     SizedBox(height: 10),
 
