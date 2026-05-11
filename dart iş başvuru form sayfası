@@ -1,86 +1,89 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(
-    MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        body: Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: NetworkImage(
-                "https://images.unsplash.com/photo-1521791136064-7986c2920216",
-              ),
-              fit: BoxFit.cover,
+  runApp(MaterialApp(
+    debugShowCheckedModeBanner: false,
+    home: FormSayfa(),
+  ));
+}
+
+class FormSayfa extends StatefulWidget {
+  @override
+  State<FormSayfa> createState() => _FormSayfaState();
+}
+
+class _FormSayfaState extends State<FormSayfa> {
+  String dosya = "Yok";
+  bool robotDegilim = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: NetworkImage(
+              "https://images.unsplash.com/photo-1521791136064-7986c2920216",
             ),
+            fit: BoxFit.cover,
           ),
+        ),
+        child: Center(
+          child: SingleChildScrollView(
+            child: Container(
+              padding: EdgeInsets.all(20),
+              margin: EdgeInsets.all(20),
+              color: Colors.white70,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text("İş Başvuru Formu",
+                      style: TextStyle(fontSize: 24)),
+                  SizedBox(height: 10),
 
-          child: Center(
-            child: SingleChildScrollView(
-              child: Container(
-                padding: EdgeInsets.all(20),
-                margin: EdgeInsets.all(20),
-                color: Colors.white70,
+                  TextField(decoration: InputDecoration(labelText: "Ad")),
+                  TextField(decoration: InputDecoration(labelText: "Soyad")),
+                  TextField(decoration: InputDecoration(labelText: "Email")),
+                  TextField(decoration: InputDecoration(labelText: "Doğum Tarihi")),
+                  TextField(decoration: InputDecoration(labelText: "Adres")),
 
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
+                  SizedBox(height: 10),
 
-                    Text(
-                      "İş Başvuru Formu",
-                      style: TextStyle(fontSize: 24),
-                    ),
+                  Text("Yüklenen Dosya: $dosya"),
 
-                    SizedBox(height: 10),
+                  SizedBox(height: 10),
 
-                    TextField(
-                      decoration: InputDecoration(labelText: "Ad"),
-                    ),
+                  ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        dosya = "cv.pdf";
+                      });
+                    },
+                    child: Text("Dosya Yükle"),
+                  ),
 
-                    TextField(
-                      decoration: InputDecoration(labelText: "Soyad"),
-                    ),
+                  CheckboxListTile(
+                    value: robotDegilim,
+                    title: Text("Ben robot değilim"),
+                    onChanged: (v) {
+                      setState(() {
+                        robotDegilim = v!;
+                      });
+                    },
+                  ),
 
-                    TextField(
-                      decoration: InputDecoration(labelText: "Email"),
-                    ),
+                  SizedBox(height: 10),
 
-                    TextField(
-                      decoration: InputDecoration(
-                        labelText: "Doğum Tarihi",
-                      ),
-                    ),
-
-                    TextField(
-                      decoration: InputDecoration(
-                        labelText: "Adres",
-                      ),
-                    ),
-
-                    SizedBox(height: 10),
-
-                    Text("Yüklenen Dosya: cv.pdf"),
-
-                    SizedBox(height: 10),
-
-                    ElevatedButton(
-                      onPressed: () {},
-                      child: Text("Dosya Yükle"),
-                    ),
-
-                    SizedBox(height: 10),
-
-                    ElevatedButton(
-                      onPressed: () {},
-                      child: Text("Gönder"),
-                    ),
-                  ],
-                ),
+                  ElevatedButton(
+                    onPressed: () {},
+                    child: Text("Gönder"),
+                  ),
+                ],
               ),
             ),
           ),
         ),
       ),
-    ),
-  );
+    );
+  }
 }
