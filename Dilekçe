@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html >
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dilekçe</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 50px;
+            background-color: #f8f8f8;
+        }
+
+        .container {
+            width: 600px;
+            background: white;
+            padding: 20px;
+            border: 2px solid black;
+            margin: auto;
+            box-shadow: 5px 5px 10px rgba(0,0,0,0.1);
+        }
+
+        h2, h3 {
+            text-align: center;
+        }
+
+        .date {
+            text-align: right;
+            font-weight: bold;
+        }
+
+        .content {
+            text-align: justify;
+            margin-top: 20px;
+        }
+
+        .attachments {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        .signature {
+            text-align: right;
+            font-weight: bold;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Malatya Turgut Özal Üniversitesi Doğanşehir Vahap Küçük Meslek Yüksekokulu Müdürlüğüne</h2>
+        
+
+        <p class="date">26.12.2023</p>
+
+        <p class="content">
+            123456 numaralı Bilgisayar Programcılığı Programı öğrencisiyim. 
+            24.10.2023 tarihinde BTP206 Web Tasarımının Temelleri vize sınavına giremedim. 
+            Mazeret sınavına alınmam hususunda gereğini arz ederim.
+        </p>
+
+        <p class="attachments"><strong>EKLER</strong><br>Sağlık Raporu</p>
+
+        <p class="signature">halil keskin</p>
+    </div>
+    
+
+</body>
+</html>
