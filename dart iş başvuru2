@@ -1,0 +1,48 @@
+import 'package:flutter/material.dart';
+
+void main() => runApp(MaterialApp(home: IKSayfa()));
+
+class IKSayfa extends StatefulWidget {
+  @override
+  State<IKSayfa> createState() => _IKSayfaState();
+}
+
+class _IKSayfaState extends State<IKSayfa> {
+  final ad = TextEditingController();
+  final soyad = TextEditingController();
+  final email = TextEditingController();
+  final tc = TextEditingController();
+  final dosya = TextEditingController();
+
+  String sonuc = "";
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Yeni Personel")),
+      body: Padding(
+        padding: EdgeInsets.all(15),
+        child: Column(
+          children: [
+            TextField(controller: ad, decoration: InputDecoration(labelText: "Ad")),
+            TextField(controller: soyad, decoration: InputDecoration(labelText: "Soyad")),
+            TextField(controller: email, decoration: InputDecoration(labelText: "Email")),
+            TextField(controller: tc, decoration: InputDecoration(labelText: "TC")),
+            TextField(controller: dosya, decoration: InputDecoration(labelText: "Dosya")),
+
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  sonuc =
+                      "${ad.text} ${soyad.text}\n${email.text}\n${tc.text}\n${dosya.text}";
+                });
+              },
+              child: Text("Ekle"),
+            ),
+
+            Text(sonuc),
+          ],
+        ),
+      ),
+    );
+  }
