@@ -1,0 +1,76 @@
+<html>
+    <head>
+<meta http-equib="content-type" content="text/html; charset=UTF-8"/>
+<title>Form Veri Kaydetme</title>
+</head>
+<?php
+require_once 'baglanti_mysqlcon.php';
+if(isset($_POST['kaydet'])){
+    $uni=$_POST['uni'];
+    $yil=$_POST['yil'];
+    $adres=$_POST['adres'];
+    
+    $sqladd="INSERT INTO universite(universite,durum,kurulus_tarihi,adres) VALUES('$uni','aktif','$yil','$adres'";
+    $sonucadd=mysqli_query($baglanti,$sqladd);
+    if($sonucadd){
+        echo"Kaydınız Başarılı $uni bilgisi kaydedildi";
+    }else{
+        echo"Kaydınız Başarısız $unibilgisi kadedilmedi";
+    }
+}
+$id=$_GET['id'];
+$sqlsil="DELETE fromuniversite where uni_id=$id";
+$silsonuc=mysqli_query($baglanti,$sqladd);
+if($silsonuc){
+
+
+}else{
+    echo"Silme işlemi sırasında bir hata oluştu.";
+}
+
+?>
+<body>
+    <form action="formsqladd.php" metod="POST">
+        <input type="text" name="uni" placeholder="Universite Adını Girini:"><br>
+        <input type="number" name="yil" max="2026" min="1923"><br>
+        <input type="text" name="adres" placeholder="Adres Yazınız"><br>
+        <input type="submit"name="kaydet"value="KAYDET">
+</form>
+<table border="2">
+    <tr>
+        <th>#</th>
+        <th>Universite</th>
+        <th>Kuruluş Tarihi</th>
+        <th>Adres</th>
+        <th>Durum</th>
+        <th>Sil</th>
+</tr>
+<?php
+$sqlvericeek="Select * from universite order by uni_id DESC";
+$sqlsonuc=mysqli_query($baglanti,$sqlvericeek);
+if($sqlsonuc){
+    while($veri=mysqli_fetch_assoc($sqlsonuc)){
+        
+  
+
+
+
+
+?>
+<tr>
+    <td><?php echo $veri['uni_id']; ?></td>
+    <td><?php echo $veri['universite']; ?></td>
+    <td><?php echo $veri['kurulus_tarihi']; ?></td>
+    <td><?php echo $veri['adres']; ?></td>
+    <td><?php echo $veri['durum']; ?></td>
+    <td><a href="formsqladd.php?id=<?php echo $veri['uni_id']; ?>">SİL</a></td>
+</tr>
+<?php }
+
+}else{
+    echo"Veri bulunamadı!";
+}
+
+</table>
+</body>
+    </html>
