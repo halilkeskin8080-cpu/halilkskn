@@ -1,0 +1,86 @@
+package ücaralıkikibinyirmibeş;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.text.BreakIterator;
+import java.util.Iterator;
+import java.util.Scanner;
+
+
+
+public class dersörneği {
+	static void add() {
+		try 
+		(BufferedReader ABC = new BufferedReader (new FileReader("abc.txt"))) {
+			String str;
+			while((str=ABC.readLine())!=null) {
+				System.out.println(str);
+			}
+			
+				
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+	}
+	public void okumayaz() {
+
+		try {
+			Scanner k =new Scanner(System.in);
+			FileWriter fr=new FileWriter("abc.txt");
+			FileWriter ort=new FileWriter("ort.txt");
+			for(int i=0;i<5;i++) {
+				System.out.println("-------------------");
+				System.out.println("lütfen vize puanı girin:");
+				int vize=k.nextInt();
+				System.out.println("Lütfen final notunu giriniz:");
+				int ort1=k.nextInt();
+				fr.write(vize+""+ort1+"\n");
+				
+				
+				
+			}
+			fr.close();
+			BufferedReader t=new BufferedReader(new FileReader("abc.txt"));
+			String veri;
+			
+			String fnot = null;
+			while((veri=t.readLine())!=null) {
+				System.out.println("okunan veri"+veri);
+				veri=veri.trim();
+				String vize=veri.substring(0,veri.indexOf(""));
+				String fort=veri.substring(veri.indexOf("")).trim();
+				int vnot=Integer.parseInt(vize);
+				int finot=Integer.parseInt(fnot);
+				int toplam=vnot+finot;
+				Double ort1=(double) (toplam/2);
+			    fnot=(vize+""+ort1+"\n");
+				System.out.println("vize"+vize);
+				System.out.println("final"+fnot);
+				
+				
+				
+			}
+		
+			
+			
+		
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+}
+
+	
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+		dersörneği ABC=new ücaralıkikibinyirmibeş.dersörneği();
+		ABC.okumayaz();
+		ABC.add();
+		
+}
+
+}
