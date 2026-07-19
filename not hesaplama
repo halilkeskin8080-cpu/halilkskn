@@ -1,0 +1,38 @@
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Scanner;
+
+public class NotHesaplama {
+    public static void main(String[] args) {
+
+        try {
+            File girisDosyasi = new File("ogrenciler.txt");
+            Scanner oku = new Scanner(girisDosyasi);
+
+            FileWriter yaz = new FileWriter("ortalama.txt");
+
+            while (oku.hasNextLine()) {
+                String satir = oku.nextLine();
+                String[] bilgiler = satir.split(" ");
+
+                String ad = bilgiler[0];
+                String soyad = bilgiler[1];
+                int vize = Integer.parseInt(bilgiler[2]);
+                int fin = Integer.parseInt(bilgiler[3]);
+
+                double ortalama = (vize + fin) / 2.0;
+
+                yaz.write(ad + " " + soyad + " Ortalama: " + ortalama + "\n");
+            }
+
+            oku.close();
+            yaz.close();
+
+            System.out.println("Ortalama dosyası oluşturuldu.");
+
+        } catch (IOException e) {
+            System.out.println("Dosya hatası!");
+        }
+    }
+}
